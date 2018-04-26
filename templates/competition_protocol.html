@@ -1,0 +1,87 @@
+{% extends "header.html" %}
+{% block content %}
+    <div class="content container">
+        <h3>{{ competition.title }}</h3>
+        <h5> Место проведения: {{ competition.place }}</h5>
+        <h6> Дата начала соревнований: {{ competition.start|date:"d E Y" }}</h6>
+        <h6> Дата окончания соревнований: {{ competition.end|date:"d E Y" }}</h6>
+        {% if competition.organizer %}
+            <h6> Организатор: {{ competition.organizer }}</h6>
+        {% endif %}
+        <h4><a href="/competitions/{{competition.id}}"> Перейти к списку участников соревнования</a></h4>
+        <h4><a href="/competitions/{{competition.id}}/rank"> Перейти к таблице победителей</a></h4>
+
+{#        <h4><a href="/competitions/{{competition.id}}/protocol_print">Печатать протокол соревнования</a></h4>#}
+
+        <table class="table_gymnast">
+            <caption>Сводный протокол (личный зачёт)</caption>
+            <tr>
+                <td>Место</td>
+                <td>Участник</td>
+                <td>г.р.</td>
+                <td>Разряд</td>
+                <td>Город</td>
+                <td>Тренер</td>
+                <td>1 вид</td>
+                <td>2 вид</td>
+                <td>3 вид</td>
+                <td>4 вид</td>
+                <td>Сумма</td>
+            </tr>
+            {% for gymnast in competition.gymnasts.all|dictsortreversed:'result' %}
+                <tr>
+{#                    <th>{{ gymnast.rank_position|default_if_none:"-" }}</th>#}
+                    <th>{{ gymnast.rank|default_if_none:"-" }}</th>
+                    <th>{{ gymnast.name }}</th>
+                    <td>{{ gymnast.year_of_birth }}</td>
+                    <td>{{ gymnast.get_category_display|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.city|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.coach|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.result1|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.result2|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.result3|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.result4|default_if_none:"-" }}</td>
+                    <td>{{ gymnast.result|default_if_none:"-" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <table class="table_gymnast">
+            <caption>Сводный протокол (командный зачёт)</caption>
+            <tr>
+                <td>Место</td>
+                <td>Команда</td>
+                <td>Город</td>
+                <td>Тренер</td>
+                <td>1 вид</td>
+                <td>2 вид</td>
+                <td>Сумма</td>
+            </tr>
+            {% for team in competition.teams.all|dictsortreversed:'result' %}
+                <tr>
+{#                    <th>{{ team.rank_position|default_if_none:"-" }}</th>#}
+                    <th>{{ team.rank|default_if_none:"-" }}</th>
+                    <th>{{ team.name }}</th>
+                    <td>{{ team.city|default_if_none:"-" }}</td>
+                    <td>{{ team.coach|default_if_none:"-" }}</td>
+                    <td>{{ team.result1|default_if_none:"-" }}</td>
+                    <td>{{ team.result2|default_if_none:"-" }}</td>
+                    <td>{{ team.result|default_if_none:"-" }}</td>
+                </tr>
+                {% for team_gymnast in team.team_gymnasts.all %}
+                <tr>
+                    <td></td>
+                    <th>{{ team_gymnast.name }}</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+
+        <br><br>
+    </div>
+{% endblock %}

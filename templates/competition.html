@@ -1,0 +1,97 @@
+{% extends "header.html" %}
+{% block content %}
+    <div class="content container">
+        <h3>{{ competition.title }}</h3>
+        <h5> Место проведения: {{ competition.place }}</h5>
+        <h6> Дата начала соревнований: {{ competition.start|date:"d E Y" }}</h6>
+        <h6> Дата окончания соревнований: {{ competition.end|date:"d E Y" }}</h6>
+        {% if competition.organizer %}
+            <h6> Организатор: {{ competition.organizer }}</h6>
+        {% endif %}
+        <h4><a href="/competitions/{{competition.id}}/rank"> Перейти к таблице победителей</a></h4>
+        <h4><a href="/competitions/{{competition.id}}/protocol"> Перейти сводному протоколу соревнования</a></h4>
+
+        <table class="table_gymnast">
+            <caption>Список участников соревнований</caption>
+            <tr>
+                <td>№</td>
+                <td>Гимнастка</td>
+                <td>г.р.</td>
+                <td>Разряд</td>
+                <td>Город</td>
+                <td>Тренер</td>
+            </tr>
+            {% if competition.gymnasts_are_sorted %}
+                {% for gymnast in competition.gymnasts.all|dictsort:"number" %}
+                    <tr>
+                        <th>{{ gymnast.number|default_if_none:"-" }}</th>
+                        <th>{{ gymnast.name }}</th>
+                        <td>{{ gymnast.year_of_birth }}</td>
+                        <td>{{ gymnast.get_category_display }}</td>
+                        <td>{{ gymnast.city }}</td>
+                        <td>{{ gymnast.coach }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for gymnast in competition.gymnasts.all %}
+                    <tr>
+                        <th>{{ gymnast.number|default_if_none:"-" }}</th>
+                        <th>{{ gymnast.name }}</th>
+                        <td>{{ gymnast.year_of_birth }}</td>
+                        <td>{{ gymnast.get_category_display }}</td>
+                        <td>{{ gymnast.city }}</td>
+                        <td>{{ gymnast.coach }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+
+        <table class="table_gymnast">
+            <caption>Список команд</caption>
+            <tr>
+                <td>№</td>
+                <td>Команда</td>
+                <td>Город</td>
+                <td>Тренер</td>
+            </tr>
+            {% if competition.teams_are_sorted %}
+                {% for team in competition.teams.all|dictsort:"number" %}
+                    <tr>
+                        <th>{{ team.number|default_if_none:"-" }}</th>
+                        <th>{{ team.name }}</th>
+                        <td>{{ team.city }}</td>
+                        <td>{{ team.coach }}</td>
+                    </tr>
+                    {% for team_gymnast in team.team_gymnasts.all %}
+                    <tr>
+                        <th></th>
+                        <th>{{ team_gymnast.name }}</th>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                {% for team in competition.teams.all %}
+                    <tr>
+                        <th>{{ team.number|default_if_none:"-" }}</th>
+                        <th>{{ team.name }}</th>
+                        <td>{{ team.city }}</td>
+                        <td>{{ team.coach }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+
+{#        <form action="/competitions/download_pdf" method="post" enctype="multipart/form-data">#}
+{#            <input type="hidden" name="id" value="{{competition.id}}">#}
+{#            <input type="hidden" name="page_size" value="letter"><br>#}
+{#            <input type="submit" value="Сохранить протокол соревнования как PDF" />#}
+{#        </form>#}
+
+{#        <div class = "container">#}
+{#            {{ competition.body|safe|linebreaks}}#}
+{#        </div>#}
+        <br><br>
+    </div>
+{% endblock %}

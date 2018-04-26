@@ -1,0 +1,77 @@
+{% extends "header.html" %}
+{% block content %}
+    <div class="content container">
+        <h3>{{ competition.title }}</h3>
+        <h5> Место проведения: {{ competition.place }}</h5>
+        <h6> Дата начала соревнований: {{ competition.start|date:"d E Y" }}</h6>
+        <h6> Дата окончания соревнований: {{ competition.end|date:"d E Y" }}</h6>
+        {% if competition.organizer %}
+            <h6> Организатор: {{ competition.organizer }}</h6>
+        {% endif %}
+        <h4><a href="/competitions/{{competition.id}}"> Перейти к списку участников соревнования</a></h4>
+        <h4><a href="/competitions/{{competition.id}}/protocol"> Перейти сводному протоколу соревнования</a></h4>
+
+{#        {% if competition.gymnasts_comp.all|dictsortreversed:'result' %}#}
+            <table class="table_gymnast">
+                <caption>Таблица победителей в личном зачёте</caption>
+                <tr>
+                    <td>Место</td>
+                    <td>Гимнастка</td>
+                    <td>г.р.</td>
+                    <td>Разряд</td>
+                    <td>Город</td>
+                    <td>Сумма</td>
+                </tr>
+                {% for gymnast in competition.gymnasts.all|dictsortreversed:'result' %}
+                    {% if gymnast.rank %}
+                        <tr>
+{#                            <th>{{ gymnast.rank_position }}</th>#}
+                            <th>{{ gymnast.rank }}</th>
+                            <th>{{ gymnast.name }}</th>
+                            <td>{{ gymnast.year_of_birth }}</td>
+                            <td>{{ gymnast.get_category_display }}</td>
+                            <td>{{ gymnast.city }}</td>
+                            <td>{{ gymnast.result }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+{#        {% else %}#}
+{#            Sorry, no athletes in this list.#}
+{#        {% endif %}#}
+
+        {#        {% if competition.gymnasts_comp.all|dictsortreversed:'result' %}#}
+            <table class="table_gymnast">
+                <caption>Таблица победителей в командном зачёте</caption>
+                <tr>
+                    <td>Место</td>
+                    <td>Команда</td>
+{#                    <td>г.р.</td>#}
+{#                    <td>Разряд</td>#}
+                    <td>Город</td>
+                    <td>Сумма</td>
+                </tr>
+                {% for team in competition.teams.all|dictsortreversed:'result' %}
+                    {% if team.rank %}
+                        <tr>
+{#                            <th>{{ team.rank_position }}</th>#}
+                            <th>{{ team.rank }}</th>
+                            <th>{{ team.name }}</th>
+{#                            <td>{{ gymnast.year_of_birth }}</td>#}
+{#                            <td>{{ gymnast.get_category_display }}</td>#}
+                            <td>{{ team.city }}</td>
+                            <td>{{ team.result }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+{#        {% else %}#}
+{#            Sorry, no athletes in this list.#}
+{#        {% endif %}#}
+
+{#        <div class = "container">#}
+{#            {{ competition.body|safe|linebreaks}}#}
+{#        </div>#}
+        <br><br>
+    </div>
+{% endblock %}
